@@ -4,6 +4,15 @@
 	<title>Hranoprovod</title>
 </head>
 <body>
+	<nav>
+	<a href="/">Home</a>
+	{{if .User}}
+		<a href="/add">Add</a>
+		<a href="{{.LogoutURL}}">Logout</a>
+	{{else}}
+		<a href="{{.LoginURL}}">Login</a>
+	{{end}}
+	</nav>
 	<div id="content">
 		{{template "content" .}}
 	</div>

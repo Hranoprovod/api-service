@@ -5,12 +5,12 @@
 	<tbody>
 		{{range $i, $node := .Latest}}
 			<tr>
-				<td>{{$node.Name}}</td>
-				<td>{{$node.Calories}}</td>
-				<td>{{$node.Fat}}</td>
-				<td>{{$node.Carbohydrate}}</td>
-				<td>{{$node.Protein}}</td>
-				<td>{{$node.Created}}</td>
+				<td><a href="/item/{{$node.Slug}}">{{$node.Name}}</a></td>
+				<td>{{valToStr $node.Calories}}</td>
+				<td>{{valToStr $node.Fat}}</td>
+				<td>{{valToStr $node.Carbohydrate}}</td>
+				<td>{{valToStr $node.Protein}}</td>
+				<td>{{timeToStr $node.Created}}</td>
 			</tr>
 		{{end}}
 	</tbody>

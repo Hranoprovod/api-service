@@ -1,93 +1,87 @@
 package apiservice
 
 import (
-	"time"
-	"strconv"
-	"net/http"
 	"appengine"
 	"appengine/user"
-	"appengine/datastore"
+	"github.com/gorilla/mux"
+	"github.com/gosimple/slug"
 	"html/template"
+	"net/http"
+	"time"
 )
 
-const(
-	PRECISION = 1000
-)
+type TemplateData map[string]interface{}
+
+var helperFuncs = template.FuncMap{
+	"valToStr":  valToStr,
+	"timeToStr": timeToStr,
+}
+
+func NewData() TemplateData {
+	return make(TemplateData)
+}
 
 func init() {
-	http.HandleFunc("/", index)
-	http.HandleFunc("/add", add)
-	http.HandleFunc("/save", save)
+	r := mux.NewRouter()
+	r.HandleFunc("/", indexHandler)
+	r.HandleFunc("/item/{itemID}", itemHandler)
+	r.HandleFunc("/add", addHandler)
+	r.HandleFunc("/save", saveHandler)
+	http.Handle("/", r)
 }
 
-func getLatestNodes(c appengine.Context, limit int) []Node {
-	q := datastore.NewQuery("Node").Order("-Created").Limit(limit)
-	var nodes []Node
-	q.GetAll(c, &nodes)
-	return nodes
+func render(data TemplateData, w http.ResponseWriter, r *http.Request, filenames ...string) {
+	c := appengine.NewContext(r)
+	data["User"] = user.Current(c)
+	url, _ := user.LoginURL(c, "/")
+	data["LoginURL"] = url
+	url, _ = user.LogoutURL(c, "/")
+	data["LogoutURL"] = url
+	t := template.New("layout.html")
+	t.Funcs(helperFuncs)
+	if err := template.Must(t.ParseFiles(filenames...)).Execute(w, data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
-	var indexTmpl = template.Must(template.ParseFiles("templates/layout.html", "templates/index.html"))
+func indexHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	data := make(map[string]interface{})
-	data["Latest"] = getLatestNodes(c, 10);
-	if err := indexTmpl.Execute(w, data); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	data["Latest"] = getLatestNodes(c, 10)
+	render(data, w, r, "templates/layout.html", "templates/index.html")
 }
 
-func add(w http.ResponseWriter, r *http.Request) {
-	var addTmpl = template.Must(template.ParseFiles("templates/layout.html", "templates/add.html"))
-	if err := addTmpl.Execute(w, nil); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+func itemHandler(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	render(data, w, r, "templates/layout.html", "templates/item.html")
 }
 
-func getFloat(value string) float32 {
-	num, _ := strconv.ParseFloat(value, 32)
-	return float32(num)
+func addHandler(w http.ResponseWriter, r *http.Request) {
+	render(NewData(), w, r, "templates/layout.html", "templates/add.html")
 }
 
-func floatToInt(value float32) int {
-	return int(value * PRECISION) 
-}
-
-type Node struct {
-	Name string
-	Calories int
-	Fat int
-	Carbohydrate int
-	Protein int
-	Barcode string
-	UserId string
-	Created time.Time
-}
-
-func save(w http.ResponseWriter, r *http.Request) {
+func saveHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	u := user.Current(c)
-	userId := ""
-	if u != nil {
-		userId = u.ID
+	if u == nil {
+		http.Error(w, "Not authorized", http.StatusUnauthorized)
+		return
 	}
 	n := Node{
-		Name: r.FormValue("name"),
-		Calories: floatToInt(getFloat(r.FormValue("calories"))),
-		Fat: floatToInt(getFloat(r.FormValue("fat"))),
+		Name:         r.FormValue("name"),
+		Slug:         slug.Make(r.FormValue("name")),
+		Calories:     floatToInt(getFloat(r.FormValue("calories"))),
+		Fat:          floatToInt(getFloat(r.FormValue("fat"))),
 		Carbohydrate: floatToInt(getFloat(r.FormValue("carbohydrate"))),
-		Protein: floatToInt(getFloat(r.FormValue("protein"))),
-		Barcode: r.FormValue("barcode"),
-		UserId: userId,
-		Created:    time.Now(),
+		Protein:      floatToInt(getFloat(r.FormValue("protein"))),
+		Barcode:      r.FormValue("barcode"),
+		UserId:       u.ID,
+		Created:      time.Now(),
 	}
-	key := datastore.NewKey(c, "Node", n.Name, 0, nil)
-	_, err := datastore.Put(c, key, &n)
+	err := saveNode(c, n)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusFound)
 }
-
-
