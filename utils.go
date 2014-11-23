@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	PRECISION = 1000
+       PRECISION = 1000
 )
 
 func getFloat(value string) float32 {
@@ -28,4 +28,8 @@ func valToStr(value int) (string, error) {
 
 func timeToStr(ts time.Time) (string, error) {
 	return ts.Format("01.02.2006 15:04"), nil
+}
+
+func intToFloat64(val int) float64 {
+	return float64(val) / float64(PRECISION)
 }

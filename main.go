@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"net/http"
 	"time"
+	"strings"
 )
 
 const (
@@ -37,6 +38,7 @@ func init() {
 	r.HandleFunc("/add", addHandler)
 	r.HandleFunc("/save", saveHandler)
 	r.HandleFunc("/feed", feedHandler)
+	r.HandleFunc("/search", searchHandler)
 	http.Handle("/", r)
 }
 
@@ -64,7 +66,6 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 func itemHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	vars := mux.Vars(r)
-	print(vars["slug"])
 	node := getNode(c, vars["slug"])
 	if node == nil {
 		http.Error(w, "Not found", http.StatusNotFound)
@@ -102,6 +103,11 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	err = saveNodeSearch(c, n.NewSearchNode())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
@@ -130,4 +136,15 @@ func feedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/rss+xml")
 	fmt.Fprint(w, rss)
+}
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	q := strings.TrimSpace(r.URL.Query().Get("q"))
+	if q == "" {
+		http.Error(w, "No query string found", http.StatusBadRequest)
+	}
+	data := NewData(pageTitle, pageTitle)
+	data["Results"] = searchNodes(c, q, 0)
+	render(data, w, r, "templates/layout.html", "templates/search.html")
 }
