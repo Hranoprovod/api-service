@@ -1,36 +1,32 @@
 {{define "content"}}
 	<div itemscope itemtype="http://schema.org/Recipe">
-		<div class="header">
-			<h1 itemprop="name">{{.Node.Name}}</h1>
-		</div>
-		<div class="content">
-			<dl itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">
-				<dt>Calories</dt>
-					<dd itemprop="calories">{{valToStr .Node.Calories}}</dd>
-				<dt>Fat</dt>
-					<dd itemprop="fatContent">{{valToStr .Node.Fat}}</dd>
-				<dt>Carbohydrates:</dt>
-					<dd itemprop="carbohydrateContent">{{valToStr .Node.Carbohydrate}}</dd>
-				<dt>Protein</dt>
-					<dd itemprop="proteinContent">{{valToStr .Node.Protein}}</dd>
-			</dl>
-			<hr />
-			<dl>
-				{{if .Node.Barcode}}
-				<dt>Barcode</dt>
-					<dd>{{.Node.Barcode}}</dd>
-				{{end}}
-				<dt>Created</dt>
-					<dd>{{timeToStr .Node.Created}}</dd>
-			</dl>
-			<hr />
-			<h2>Export</h2>
-			<textarea class="export">{{.Node.Name}}:
+		<meta itemprop="name" value="{{.Node.Name}}">
+		<dl itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">
+			<dt>Calories</dt>
+				<dd itemprop="calories">{{valToStr .Node.Calories}}</dd>
+			<dt>Fat</dt>
+				<dd itemprop="fatContent">{{valToStr .Node.Fat}}</dd>
+			<dt>Carbohydrates:</dt>
+				<dd itemprop="carbohydrateContent">{{valToStr .Node.Carbohydrate}}</dd>
+			<dt>Protein</dt>
+				<dd itemprop="proteinContent">{{valToStr .Node.Protein}}</dd>
+		</dl>
+		<hr />
+		<dl>
+			{{if .Node.Barcode}}
+			<dt>Barcode</dt>
+				<dd>{{.Node.Barcode}}</dd>
+			{{end}}
+			<dt>Created</dt>
+				<dd>{{timeToStr .Node.Created}}</dd>
+		</dl>
+		<hr />
+		<h2>Export</h2>
+		<textarea class="export">{{.Node.Name}}:
   calories: {{valToStr .Node.Calories}}
   fat: {{valToStr .Node.Calories}}
   carbohydrates: {{valToStr .Node.Calories}}
   protein: {{valToStr .Node.Calories}}
 </textarea>
-		</div>
 	</div>
 {{end}}

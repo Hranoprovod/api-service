@@ -1,2 +1,15 @@
 {{define "content"}}
+	{{range $i, $node := .Results}}
+		<h2><a href="/item/{{$node.Slug}}">{{$node.Name}}</a></h2>
+			<dl>
+				<dt>Calories</dt>
+					<dd>{{valToStr $node.Calories}}</dd>
+				<dt>Fat</dt>
+					<dd>{{valToStr $node.Fat}}</dd>
+				<dt>Carbohydrates:</dt>
+					<dd>{{valToStr $node.Carbohydrate}}</dd>
+				<dt>Protein</dt>
+					<dd>{{valToStr $node.Protein}}</dd>
+			</dl>
+	{{end}}
 {{end}}

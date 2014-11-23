@@ -9,8 +9,8 @@ import (
 	"github.com/gosimple/slug"
 	"html/template"
 	"net/http"
-	"time"
 	"strings"
+	"time"
 )
 
 const (
@@ -28,6 +28,7 @@ func NewData(title string, description string) TemplateData {
 	data := make(TemplateData)
 	data["Title"] = title
 	data["Description"] = description
+	data["Heading"] = title
 	return data
 }
 
@@ -73,6 +74,7 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	data := NewData((*node).Name+" - "+pageTitle, (*node).Name)
 	data["Node"] = *node
+	data["Heading"] = (*node).Name
 	render(data, w, r, "templates/layout.html", "templates/item.html")
 }
 
@@ -90,10 +92,10 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	n := Node{
 		Name:         r.FormValue("name"),
 		Slug:         slug.Make(r.FormValue("name")),
-		Calories:     floatToInt(getFloat(r.FormValue("calories"))),
-		Fat:          floatToInt(getFloat(r.FormValue("fat"))),
-		Carbohydrate: floatToInt(getFloat(r.FormValue("carbohydrate"))),
-		Protein:      floatToInt(getFloat(r.FormValue("protein"))),
+		Calories:     getFloat(r.FormValue("calories")),
+		Fat:          getFloat(r.FormValue("fat")),
+		Carbohydrate: getFloat(r.FormValue("carbohydrate")),
+		Protein:      getFloat(r.FormValue("protein")),
 		Barcode:      r.FormValue("barcode"),
 		UserId:       u.ID,
 		Created:      time.Now(),
@@ -103,12 +105,12 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = saveNodeSearch(c, n.NewSearchNode())
+	err = saveNodeSearch(c, &n)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r, "/item/"+n.Slug, http.StatusFound)
 }
 
 func feedHandler(w http.ResponseWriter, r *http.Request) {
@@ -143,8 +145,11 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	q := strings.TrimSpace(r.URL.Query().Get("q"))
 	if q == "" {
 		http.Error(w, "No query string found", http.StatusBadRequest)
+		return
 	}
 	data := NewData(pageTitle, pageTitle)
+	data["Heading"] = q
+	data["SearchString"] = q
 	data["Results"] = searchNodes(c, q, 0)
 	render(data, w, r, "templates/layout.html", "templates/search.html")
 }
