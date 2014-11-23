@@ -1,18 +1,18 @@
 package apiservice
 
 import (
-	"fmt"
 	"appengine"
 	"appengine/user"
+	"fmt"
+	. "github.com/gorilla/feeds"
 	"github.com/gorilla/mux"
 	"github.com/gosimple/slug"
 	"html/template"
 	"net/http"
 	"time"
-	. "github.com/gorilla/feeds"
 )
 
-const(
+const (
 	pageTitle = "Hranoprovod"
 )
 
@@ -25,8 +25,8 @@ var helperFuncs = template.FuncMap{
 
 func NewData(title string, description string) TemplateData {
 	data := make(TemplateData)
-	data["Title"] = title;
-	data["Description"] = description;
+	data["Title"] = title
+	data["Description"] = description
 	return data
 }
 
@@ -70,7 +70,7 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
 	}
-	data := NewData((*node).Name + " - " + pageTitle, (*node).Name)
+	data := NewData((*node).Name+" - "+pageTitle, (*node).Name)
 	data["Node"] = *node
 	render(data, w, r, "templates/layout.html", "templates/item.html")
 }
@@ -110,18 +110,18 @@ func feedHandler(w http.ResponseWriter, r *http.Request) {
 	nodes := getLatestNodes(c, 20)
 
 	feed := &Feed{
-    	Title: pageTitle,
-    	Link: &Link{Href: "http://" + r.Host + "/"},
-    	Description: "Nutrition information",
-    	Author:      &Author{"Evgeniy Vasilev", "aquilax@gmail.com"},
-    	Created:     time.Now(),
+		Title:       pageTitle,
+		Link:        &Link{Href: "http://" + r.Host + "/"},
+		Description: "Nutrition information",
+		Author:      &Author{"Evgeniy Vasilev", "aquilax@gmail.com"},
+		Created:     time.Now(),
 	}
 	for _, node := range nodes {
 		feed.Items = append(feed.Items, &Item{
-			Title: node.Name,
-			Link: &Link{Href: "http://" + r.Host + "/item/" + node.Slug},
+			Title:   node.Name,
+			Link:    &Link{Href: "http://" + r.Host + "/item/" + node.Slug},
 			Created: node.Created,
-		}) 
+		})
 	}
 	rss, err := feed.ToRss()
 	if err != nil {
