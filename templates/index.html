@@ -1,18 +1,20 @@
 {{define "content"}}
-<table>
-	<thead>
-	</thead>
-	<tbody>
-		{{range $i, $node := .Latest}}
-			<tr>
-				<td><a href="/item/{{$node.Slug}}">{{$node.Name}}</a></td>
-				<td>{{valToStr $node.Calories}}</td>
-				<td>{{valToStr $node.Fat}}</td>
-				<td>{{valToStr $node.Carbohydrate}}</td>
-				<td>{{valToStr $node.Protein}}</td>
-				<td>{{timeToStr $node.Created}}</td>
-			</tr>
-		{{end}}
-	</tbody>
-</table>
+	<div class="header">
+		<h1>Hranoprovod</h1>
+	</div>
+	<div class="content">
+	{{range $i, $node := .Latest}}
+		<h2><a href="/item/{{$node.Slug}}">{{$node.Name}}</a></h2>
+			<dl>
+				<dt>Calories</dt>
+					<dd>{{valToStr $node.Calories}}</dd>
+				<dt>Fat</dt>
+					<dd>{{valToStr $node.Fat}}</dd>
+				<dt>Carbohydrates:</dt>
+					<dd>{{valToStr $node.Carbohydrate}}</dd>
+				<dt>Protein</dt>
+					<dd>{{valToStr $node.Protein}}</dd>
+			</dl>
+	{{end}}
+	</div>
 {{end}}

@@ -29,11 +29,12 @@ func getLatestNodes(c appengine.Context, limit int) []Node {
 	return nodes
 }
 
-func getNode(c appengine.Context, slug string) Node {
-	q := datastore.NewQuery("Node").Filter("Slug", slug)
-	var nodes []Node
-	q.GetAll(c, &nodes)
-	return nodes[0]
+func getNode(c appengine.Context, slug string) *Node {
+	var n Node
+	if err := datastore.Get(c, getKey(c, slug), &n); err != nil {
+		return nil
+	}
+	return &n
 }
 
 func saveNode(c appengine.Context, n Node) error {

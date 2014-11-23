@@ -1,33 +1,39 @@
 {{define "content"}}
-<html>
-	<body>
-		<form action="/save" method="post">
-			<div>
-				<label for="name">Name</label>
-				<input type="text" id="name" name="name" value="name"/>
-			</div>
-			<div>
-				<label for="calories">Calories</label>
-				<input type="number" step="0.001" id="calories" name="calories" value="0.1"/>
-			</div>
-			<div>
-				<label for="fat">Fat</label>
-				<input type="number" step="0.001" id="fat" name="fat" value="0.2"/>
-			</div>
-			<div>
-				<label for="carbohydrate">Carbohydrate</label>
-				<input type="number" step="0.001" id="carbohydrate" name="carbohydrate" value="0.3"/>
-			</div>
-			<div>
-				<label for="protein">Protein</label>
-				<input type="number" step="0.001" id="protein" name="protein" value="0.4"/>
-			</div>
-			<div>
-				<label for="barcode">Barcode</label>
-				<input type="text" id="barcode" name="barcode" value="barcode"/>
-			</div>
-			<div><input type="submit" value="Add"></div>
+	<div class="header">
+		<h1>Add new food</h1>
+	</div>
+	<div class="content">
+		<form action="/save" method="post" class="pure-form pure-form-aligned">
+			<fieldset>
+				<div class="pure-control-group">
+					<label for="name">Name</label>
+					<input type="text" id="name" name="name" placeholder="sample/food/100g"/>
+				</div>
+				<div class="pure-control-group">
+					<label for="calories">Calories *</label>
+					<input type="number" step="0.001" id="calories" name="calories"/>
+				</div>
+				<div class="pure-control-group">
+					<label for="fat">Fat *</label>
+					<input type="number" step="0.001" id="fat" name="fat"/>
+				</div>
+				<div class="pure-control-group">
+					<label for="carbohydrate">Carbohydrate *</label>
+					<input type="number" step="0.001" id="carbohydrate" name="carbohydrate"/>
+				</div>
+				<div class="pure-control-group">
+					<label for="protein">Protein *</label>
+					<input type="number" step="0.001" id="protein" name="protein"/>
+				</div>
+				<div class="pure-control-group">
+					<label for="barcode">Barcode</label>
+					<input type="text" id="barcode" name="barcode"/>
+				</div>
+				<div class="pure-controls">
+					<button type="submit" class="pure-button pure-button-primary">Add</button>
+				</div>
+			</fieldset>
 		</form>
-	</body>
-</html>
+		<em>* values must be per 100g except when noted in the name</em>
+	</div>
 {{end}}

@@ -23,7 +23,7 @@ func floatToInt(value float32) int {
 }
 
 func valToStr(value int) (string, error) {
-	return fmt.Sprintf("%10.2f", float32(value)/float32(PRECISION)), nil
+	return fmt.Sprintf("%0.2f", float32(value)/float32(PRECISION)), nil
 }
 
 func timeToStr(ts time.Time) (string, error) {
