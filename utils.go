@@ -27,5 +27,5 @@ func valToStr(value int) (string, error) {
 }
 
 func timeToStr(ts time.Time) (string, error) {
-	return ts.Format("01.02.2006 15.04"), nil
+	return ts.Format("01.02.2006 15:04"), nil
 }

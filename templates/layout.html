@@ -4,36 +4,37 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{ .Title}}</title>
-	<title>{{ .Description}}</title>
+	<meta name="description" content="{{ .Description}}" />
 	<link rel="stylesheet" href="/assets/pure/pure-min.css">
 	<link rel="stylesheet" href="/assets/side-menu.css">
 	<link rel="alternate" type="application/rss+xml" title="Latest additions" href="/feed">
 </head>
 <body>
 	<div id="layout">
-	<a href="#menu" id="menuLink" class="menu-link">
-		<!-- Hamburger icon -->
-		<span></span>
-	</a>
+		<a href="#menu" id="menuLink" class="menu-link">
+			<!-- Hamburger icon -->
+			<span></span>
+		</a>
 
-	<div id="menu">
-		<div class="pure-menu pure-menu-open">
-			<a class="pure-menu-heading" href="#">Hranoprovod</a>
+		<div id="menu">
+			<div class="pure-menu pure-menu-open">
+				<a class="pure-menu-heading" href="#">Hranoprovod</a>
 
-			<ul>
-				<li><a href="/">Home</a></li>
-				{{if .User}}
-				<li><a href="/add">Add</a></li>
-				<li><a href="{{.LogoutURL}}">Logout</a></li>
-				{{else}}
-				<li><a href="{{.LoginURL}}">Login</a><li>
-				{{end}}
-			</ul>
+				<ul>
+					<li><a href="/">Home</a></li>
+					{{if .User}}
+					<li><a href="/add">Add</a></li>
+					<li><a href="{{.LogoutURL}}">Logout</a></li>
+					{{else}}
+					<li><a href="{{.LoginURL}}">Login</a></li>
+					{{end}}
+				</ul>
+			</div>
 		</div>
-	</div>
 
-	<div id="main">
-		{{template "content" .}}
+		<div id="main">
+			{{template "content" .}}
+		</div>
 	</div>
 	<script src="/assets/ui.js"></script>
 </body>
