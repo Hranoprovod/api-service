@@ -1,0 +1,18 @@
+{{define "content"}}
+<table>
+	<thead>
+	</thead>
+	<tbody>
+		{{range $i, $node := .Latest}}
+			<tr>
+				<td>{{$node.Name}}</td>
+				<td>{{$node.Calories}}</td>
+				<td>{{$node.Fat}}</td>
+				<td>{{$node.Carbohydrate}}</td>
+				<td>{{$node.Protein}}</td>
+				<td>{{$node.Created}}</td>
+			</tr>
+		{{end}}
+	</tbody>
+</table>
+{{end}}
