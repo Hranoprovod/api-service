@@ -42,6 +42,7 @@ func init() {
 	r.HandleFunc("/feed", feedHandler)
 	r.HandleFunc("/search", searchHandler)
 	r.HandleFunc("/sitemap.xml", sitemapHandler)
+	r.HandleFunc("/api/v1/search", apiSearchHandler)
 	http.Handle("/", r)
 }
 
