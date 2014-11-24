@@ -3,16 +3,12 @@ package apiservice
 import (
 	"appengine"
 	"encoding/json"
+	"github.com/Hranoprovod/shared"
 	"net/http"
 	"strings"
 )
 
-type APIError struct {
-	IsError bool   `json:"is_error"`
-	Code    int    `json:"code"`
-	Status  string `json:"status"`
-	Message string `json:"message"`
-}
+type APIError shared.APIError
 
 func NewAPIError(code int, message string) *APIError {
 	return &APIError{

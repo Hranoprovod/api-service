@@ -4,20 +4,10 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"appengine/search"
-	"time"
+	"github.com/Hranoprovod/shared"
 )
 
-type Node struct {
-	Name         string    `json:"name"`
-	Slug         string    `json:"slug"`
-	Calories     float64   `json:"calories"`
-	Fat          float64   `json:"fat"`
-	Carbohydrate float64   `json:"carbohydrate"`
-	Protein      float64   `json:"protein"`
-	Barcode      string    `json:"barcode,omitempty"`
-	UserId       string    `json:"-"`
-	Created      time.Time `json:"created"`
-}
+type Node shared.APINode
 
 func getKey(c appengine.Context, slug string) *datastore.Key {
 	return datastore.NewKey(c, "Node", slug, 0, nil)
