@@ -7,6 +7,7 @@ import (
 	. "github.com/gorilla/feeds"
 	"github.com/gorilla/mux"
 	"github.com/gosimple/slug"
+	"github.com/sourcegraph/sitemap"
 	"html/template"
 	"net/http"
 	"strings"
@@ -40,6 +41,7 @@ func init() {
 	r.HandleFunc("/save", saveHandler)
 	r.HandleFunc("/feed", feedHandler)
 	r.HandleFunc("/search", searchHandler)
+	r.HandleFunc("/sitemap.xml", sitemapHandler)
 	http.Handle("/", r)
 }
 
@@ -152,4 +154,25 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	data["SearchString"] = q
 	data["Results"] = searchNodes(c, q, 0)
 	render(data, w, r, "templates/layout.html", "templates/search.html")
+}
+
+func sitemapHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	latest := getLatestNodes(c, sitemap.MaxURLs)
+	var urlSet sitemap.URLSet
+	for _, node := range latest {
+		urlSet.URLs = append(urlSet.URLs, sitemap.URL{
+			Loc:        "http://" + r.Host + "/item/" + node.Slug,
+			LastMod:    &node.Created,
+			ChangeFreq: sitemap.Never,
+			Priority:   0.7,
+		})
+	}
+	xml, err := sitemap.Marshal(&urlSet)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/xml")
+	w.Write(xml)
 }
