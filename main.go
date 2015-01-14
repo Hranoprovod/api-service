@@ -1,17 +1,19 @@
 package apiservice
 
 import (
-	"appengine"
-	"appengine/user"
 	"fmt"
-	. "github.com/gorilla/feeds"
-	"github.com/gorilla/mux"
-	"github.com/gosimple/slug"
-	"github.com/sourcegraph/sitemap"
 	"html/template"
 	"net/http"
 	"strings"
 	"time"
+
+	. "github.com/gorilla/feeds"
+	"github.com/gorilla/mux"
+	"github.com/gosimple/slug"
+	"github.com/sourcegraph/sitemap"
+
+	"appengine"
+	"appengine/user"
 )
 
 const (

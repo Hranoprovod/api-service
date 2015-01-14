@@ -1,6 +1,6 @@
 {{define "content"}}
 	<div itemscope itemtype="http://schema.org/Recipe">
-		<meta itemprop="name" value="{{.Node.Name}}">
+		<meta itemprop="name" content="{{.Node.Name}}">
 		<dl itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">
 			<dt>Calories</dt>
 				<dd itemprop="calories">{{valToStr .Node.Calories}}</dd>

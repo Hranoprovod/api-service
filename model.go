@@ -1,10 +1,11 @@
 package apiservice
 
 import (
+	"github.com/Hranoprovod/shared"
+
 	"appengine"
 	"appengine/datastore"
 	"appengine/search"
-	"github.com/Hranoprovod/shared"
 )
 
 type Node shared.APINode
