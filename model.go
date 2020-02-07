@@ -1,27 +1,28 @@
-package apiservice
+package main
 
 import (
+	"context"
+
 	"github.com/Hranoprovod/shared"
 
-	"appengine"
-	"appengine/datastore"
-	"appengine/search"
+	"google.golang.org/appengine/datastore"
+	"google.golang.org/appengine/search"
 )
 
 type Node shared.APINode
 
-func getKey(c appengine.Context, slug string) *datastore.Key {
+func getKey(c context.Context, slug string) *datastore.Key {
 	return datastore.NewKey(c, "Node", slug, 0, nil)
 }
 
-func getLatestNodes(c appengine.Context, limit int) []Node {
+func getLatestNodes(c context.Context, limit int) []Node {
 	q := datastore.NewQuery("Node").Order("-Created").Limit(limit)
 	var nodes []Node
 	q.GetAll(c, &nodes)
 	return nodes
 }
 
-func getNode(c appengine.Context, slug string) *Node {
+func getNode(c context.Context, slug string) *Node {
 	var n Node
 	if err := datastore.Get(c, getKey(c, slug), &n); err != nil {
 		return nil
@@ -29,12 +30,12 @@ func getNode(c appengine.Context, slug string) *Node {
 	return &n
 }
 
-func saveNode(c appengine.Context, n Node) error {
+func saveNode(c context.Context, n Node) error {
 	_, err := datastore.Put(c, getKey(c, n.Slug), &n)
 	return err
 }
 
-func saveNodeSearch(c appengine.Context, n *Node) error {
+func saveNodeSearch(c context.Context, n *Node) error {
 	index, err := search.Open("Node")
 	if err != nil {
 		return err
@@ -46,7 +47,7 @@ func saveNodeSearch(c appengine.Context, n *Node) error {
 	return nil
 }
 
-func searchNodes(c appengine.Context, q string, limit int) []Node {
+func searchNodes(c context.Context, q string, limit int) []Node {
 	var nodes []Node
 	index, _ := search.Open("Node")
 	for t := index.Search(c, q, nil); ; {

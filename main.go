@@ -1,9 +1,11 @@
-package apiservice
+package main
 
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -12,8 +14,8 @@ import (
 	"github.com/gosimple/slug"
 	"github.com/sourcegraph/sitemap"
 
-	"appengine"
-	"appengine/user"
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/user"
 )
 
 const (
@@ -35,7 +37,7 @@ func NewData(title string, description string) TemplateData {
 	return data
 }
 
-func init() {
+func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", indexHandler)
 	r.HandleFunc("/item/{slug}", itemHandler)
@@ -46,6 +48,15 @@ func init() {
 	r.HandleFunc("/sitemap.xml", sitemapHandler)
 	r.HandleFunc("/api/v1/search", apiSearchHandler)
 	http.Handle("/", r)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func render(data TemplateData, w http.ResponseWriter, r *http.Request, filenames ...string) {
@@ -63,9 +74,8 @@ func render(data TemplateData, w http.ResponseWriter, r *http.Request, filenames
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
 	data := NewData(pageTitle, pageTitle)
-	data["Latest"] = getLatestNodes(c, 10)
+	data["Latest"] = getLatestNodes(r.Context(), 10)
 	render(data, w, r, "templates/layout.html", "templates/index.html")
 }
 
