@@ -1,4 +1,4 @@
-package apiservice
+package main
 
 import (
 	"encoding/json"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/Hranoprovod/shared"
 
-	"appengine"
+	"google.golang.org/appengine"
 )
 
 type APIError shared.APIError
